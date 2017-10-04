@@ -1,10 +1,5 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import {Primeiro, Segundo} from './component';
+import App from './main/app';
 
-ReactDom.render(
-<div>
-    <Primeiro />
-    <Segundo />
-</div>, 
-document.getElementById('app'))
+ReactDom.render(<App />, document.getElementById('app'))
