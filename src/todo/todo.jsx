@@ -16,28 +16,38 @@ export default class Todo extends React.Component{
         this.state = {description: '', list:[]};
         this.refresh = this.refresh.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handleMaskAsDone = this.handleMaskAsDone.bind(this);
+        this.handleMarkAsPending = this.handleMarkAsPending.bind(this);
         this.refresh();
+    }
+
+    handleMaskAsDone(todo){
+        axios.put(`${SERVICE_BASE_URL}?id=${todo.id}`,{...todo, done: true})
+            .then(resp => this.refresh());
+    }
+
+    handleMarkAsPending(todo){
+        axios.put(`${SERVICE_BASE_URL}?id=${todo.id}`,{...todo, done: false})
+        .then(resp => this.refresh());
     }
 
     refresh(){
         axios.get(SERVICE_BASE_URL)
         .then( resp => {
             this.setState({list: resp.data})
-            console.log(this)
-        } );
+        });
     }
 
     handleAdd(){
         const description = this.state.description;
         axios.post(SERVICE_BASE_URL, {description})
-                    .then(resp => console.log(resp.data));
-        this.refresh();
+                    .then(resp =>  this.refresh());
     }
 
     handleRemove(todo){
         axios.delete(`${SERVICE_BASE_URL}?id=${todo.id}`)
-            .then(resp => console.log('removed') );
-        this.refresh()
+            .then(resp => this.refresh() );
+        
     }
 
     handleChange(e){
@@ -51,7 +61,10 @@ export default class Todo extends React.Component{
                 <TodoForm handleAdd={this.handleAdd} 
                           handleChange={this.handleChange}
                           description={this.state.description} />
-                <TodoList list={this.state.list} handleRemove={this.handleRemove} />
+                <TodoList list={this.state.list} 
+                          handleRemove={this.handleRemove}
+                          handleMaskAsDone={this.handleMaskAsDone}
+                          handleMarkAsPending={this.handleMarkAsPending} />
             </div>
         )
     }
